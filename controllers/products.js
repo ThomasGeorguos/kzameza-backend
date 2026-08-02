@@ -1,16 +1,6 @@
 const Product = require("../models/ProductSchema");
 const Category = require("../models/CategorySchema");
-const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./images");
-  },
-  filename: function (req, file, cb) {
-    const filename = Date.now() + "-" + file.fieldname;
-    cb(null, filename);
-  },
-});
-const upload = multer({ storage: storage });
+const upload = require("../config/upload.js");
 const createProduct = async (req, res) => {
   try {
     const {
@@ -47,7 +37,7 @@ const createProduct = async (req, res) => {
       isOnSale,
       discountPercent,
       category,
-      coverImage: req.file?.filename,
+      coverImage: req.file?.path,
     });
     await newProduct.save();
     return res
