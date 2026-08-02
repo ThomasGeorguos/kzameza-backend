@@ -13,10 +13,24 @@ const orderRouter = require("./routes/orders.js");
 const contactRouter = require("./routes/contact.js");
 const dns = require("dns");
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
-connectDB();
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  });
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL, // رابط الفرونت بعد الديبلوي, مثال: https://your-app.vercel.app
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],

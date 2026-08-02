@@ -75,10 +75,11 @@ const login = async (req, res) => {
     { expiresIn: "7d" },
   );
 
+  const isProd = process.env.NODE_ENV === "production";
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -132,10 +133,11 @@ const verify = async (req, res) => {
   }
 };
 const logout = (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
@@ -306,4 +308,3 @@ module.exports = {
   getAllUsers,
   deleteUser,
 };
-// tt
