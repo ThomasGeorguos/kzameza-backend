@@ -47,6 +47,12 @@ app.use("/cart", cartRouter);
 app.use("/orders", orderRouter);
 app.use("/contact", contactRouter);
 
+// Error handler عام: أي خطأ (زي فشل رفع الصورة على Cloudinary) يرجع JSON بدل صفحة HTML
+app.use((err, req, res, next) => {
+  console.error("Server error:", err.message);
+  res.status(500).json({ message: err.message || "Internal server error" });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
