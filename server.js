@@ -14,9 +14,20 @@ const contactRouter = require("./routes/contact.js");
 const dns = require("dns");
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 connectDB();
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://kzameza-gamma.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
