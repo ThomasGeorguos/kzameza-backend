@@ -66,10 +66,10 @@ const createOrder = async (req, res) => {
 
     await order.save();
 
-    // ينقص من الستوك بمجرد ما الاوردر يتأكد
+    // ينقص من الستوك ويزود العداد بمجرد ما الاوردر يتأكد
     for (const item of cart.items) {
       await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { stock: -item.quantity },
+        $inc: { stock: -item.quantity, soldCount: item.quantity },
       });
     }
 
@@ -158,10 +158,10 @@ const updateOrderStatus = async (req, res) => {
     const willBeCancelled = status === "cancelled";
 
     if (!wasCancelled && willBeCancelled) {
-      // الاوردر بيتلغي - نرجّع الكمية للستوك
+      // الاوردر بيتلغي - نرجّع الكمية للستوك ونقلل عداد المبيعات
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, {
-          $inc: { stock: item.quantity },
+          $inc: { stock: item.quantity, soldCount: -item.quantity },
         });
       }
     } else if (wasCancelled && !willBeCancelled) {
@@ -176,7 +176,7 @@ const updateOrderStatus = async (req, res) => {
       }
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, {
-          $inc: { stock: -item.quantity },
+          $inc: { stock: -item.quantity, soldCount: item.quantity },
         });
       }
     }
