@@ -2,8 +2,7 @@ const HeroSlide = require("../models/HeroSlideSchema");
 
 const createHeroSlide = async (req, res) => {
   try {
-    const { product, eyebrow, title, highlight, description, order } =
-      req.body;
+    const { product, eyebrow, title, highlight, description, order } = req.body;
 
     if (!product) {
       return res.status(400).json({ message: "product is required" });
@@ -45,6 +44,37 @@ const getHeroSlides = async (req, res) => {
   }
 };
 
+const updateHeroSlide = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { product, eyebrow, title, highlight, description, order } = req.body;
+
+    const updateData = {};
+    if (product !== undefined) updateData.product = product;
+    if (eyebrow !== undefined) updateData.eyebrow = eyebrow;
+    if (title !== undefined) updateData.title = title;
+    if (highlight !== undefined) updateData.highlight = highlight;
+    if (description !== undefined) updateData.description = description;
+    if (order !== undefined) updateData.order = order;
+    if (req.file) updateData.image = req.file.path;
+
+    const slide = await HeroSlide.findByIdAndUpdate(id, updateData, {
+      new: true,
+    }).populate("product");
+
+    if (!slide) {
+      return res.status(404).json({ message: "hero slide not found" });
+    }
+
+    return res.status(200).json({
+      message: "hero slide updated successfully",
+      slide,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const deleteHeroSlide = async (req, res) => {
   try {
     const { id } = req.params;
@@ -58,4 +88,9 @@ const deleteHeroSlide = async (req, res) => {
   }
 };
 
-module.exports = { createHeroSlide, getHeroSlides, deleteHeroSlide };
+module.exports = {
+  createHeroSlide,
+  getHeroSlides,
+  updateHeroSlide,
+  deleteHeroSlide,
+};
