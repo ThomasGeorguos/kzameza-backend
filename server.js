@@ -11,6 +11,7 @@ const categoryRouter = require("./routes/category.js");
 const cartRouter = require("./routes/cart.js");
 const orderRouter = require("./routes/orders.js");
 const contactRouter = require("./routes/contact.js");
+const heroSlideRouter = require("./routes/heroSlides.js");
 const dns = require("dns");
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 connectDB();
@@ -46,6 +47,7 @@ app.use("/category", categoryRouter);
 app.use("/cart", cartRouter);
 app.use("/orders", orderRouter);
 app.use("/contact", contactRouter);
+app.use("/hero-slides", heroSlideRouter);
 
 // Error handler عام: أي خطأ (زي فشل رفع الصورة على Cloudinary) يرجع JSON بدل صفحة HTML
 app.use((err, req, res, next) => {
